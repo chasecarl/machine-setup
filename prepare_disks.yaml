@@ -1,4 +1,4 @@
-- name: Setup machine
+- name: Prepare the disk(s)
   hosts: pc
   vars:
     partitions:
@@ -17,6 +17,8 @@
           first }}
       vars:
         suitable_device_query: "[?value.removable == '0' && !contains(key, `loop`)].key"
+      tags:
+        - always
     - name: Print suitable device
       ansible.builtin.debug:
         msg: "{{ install_device }}"
