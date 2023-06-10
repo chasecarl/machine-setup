@@ -70,4 +70,4 @@
         number: "{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}"
         state: present
         part_start: "{{ device_info.partitions[-1].end | int }}MiB"
-        fs_type: ext4
+        fs_type: btrfs  # it's just a hint
