@@ -73,3 +73,25 @@
         state: present
         part_start: "{{ device_info.partitions[-1].end | int }}MiB"
         fs_type: btrfs  # it's just a hint
+
+
+    - name: Format the efi partition
+      community.general.filesystem:
+        fstype: vfat
+        dev: "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
+      tags:
+        - format
+
+    - name: Format the swap partition
+      community.general.filesystem:
+        fstype: swap
+        dev: "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
+      tags:
+        - format
+
+    - name: Enable swapping
+      ansible.builtin.shell:
+        cmd: swapon "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
+      when: ansible_facts.swaptotal_mb == 0
+      tags:
+        - format
