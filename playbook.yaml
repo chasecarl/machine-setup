@@ -1,15 +1,16 @@
 - name: Setup machine
   hosts: pc
   tasks:
-    - name: Find suitable drive
+    - name: Find suitable device
       ansible.builtin.set_fact:
-        install_drive: "{{ ansible_facts.devices |
-                           dict2items |
-                           community.general.json_query(suitable_device_query) |
-                           first }}"
+        install_device: /dev/{{
+          ansible_facts.devices |
+          dict2items |
+          community.general.json_query(suitable_device_query) |
+          first }}
       vars:
         suitable_device_query: "[?value.removable == '0' && !contains(key, `loop`)].key"
-    - name: Print suitable drive
+    - name: Print suitable device
       ansible.builtin.debug:
-        msg: "{{ install_drive }}"
+        msg: "{{ install_device }}"
 
