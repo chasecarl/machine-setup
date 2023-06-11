@@ -7,6 +7,7 @@
       - primary
     efi_end: 256MiB
     swap_start: "{{ efi_end }}"
+    primary_partition_name: cryptroot
   tasks:
     - name: Find suitable device
       ansible.builtin.set_fact:
@@ -16,7 +17,8 @@
           community.general.json_query(suitable_device_query) |
           first }}
       vars:
-        suitable_device_query: "[?value.removable == '0' && !contains(key, `loop`)].key"
+        # dm is device mapper
+        suitable_device_query: "[?value.removable == '0' && !contains(key, `loop`) && !contains(key, `dm-`)].key"
       tags:
         - always
     - name: Print suitable device
@@ -95,3 +97,36 @@
       when: ansible_facts.swaptotal_mb == 0
       tags:
         - format
+
+
+    - name: Determine if the primary partition is already encrypted
+      ansible.builtin.shell:
+        cmd: blkid "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" | grep crypto_LUKS
+      register: is_primary_encrypted
+      failed_when: is_primary_encrypted.rc == 2
+      tags:
+        - encrypt
+    - name: Encrypt the primary partition
+      ansible.builtin.shell:
+        cmd: cryptsetup luksFormat "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}"
+        stdin: "{{ disk_encryption_passphrase }}\n{{ disk_encryption_passphrase }}"
+      when:
+        is_primary_encrypted.rc == 1
+      tags:
+        - encrypt
+
+    - name: Determine if the primary partition is already opened
+      ansible.builtin.shell:
+        cmd: ls /dev/mapper/{{ primary_partition_name }}
+      register: is_primary_opened
+      failed_when: false
+      tags:
+        - encrypt
+    - name: Open the encrypted primary partition
+      ansible.builtin.shell:
+        cmd: cryptsetup luksOpen "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" "{{ primary_partition_name }}"
+        stdin: "{{ disk_encryption_passphrase }}"
+      when:
+        is_primary_opened.rc == 2
+      tags:
+        - encrypt
