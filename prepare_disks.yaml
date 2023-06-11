@@ -129,3 +129,11 @@
         is_primary_opened.rc == 2
       tags:
         - encrypt
+
+
+    - name: Format the primary partition
+      community.general.filesystem:
+        fstype: btrfs
+        dev: /dev/mapper/{{ primary_partition_name }}
+      tags:
+        - format_after_encrypt
