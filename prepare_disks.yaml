@@ -32,6 +32,26 @@
       ansible.builtin.debug:
         msg: "{{ device_info }}"
 
+    # TODO: the 'Determine...' tasks are the same as the tasks below - find a way to reuse them
+    - name: Determine if the primary partition is already encrypted
+      ansible.builtin.shell:
+        cmd: blkid "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" | grep crypto_LUKS
+      register: is_primary_encrypted
+      failed_when: is_primary_encrypted.rc == 2
+    - name: Determine if the primary partition is already opened
+      ansible.builtin.shell:
+        cmd: ls /dev/mapper/{{ primary_partition_name }}
+      register: is_primary_opened
+      failed_when: false
+
+    - name: Disable device swapping
+      ansible.builtin.shell:
+        cmd: swapoff "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
+      when: ansible_facts.swaptotal_mb > 0
+    - name: Close the encrypted primary partition
+      ansible.builtin.shell:
+        cmd: cryptsetup luksClose "{{ primary_partition_name }}"
+      when: is_primary_opened.rc == 0
     - name: Remove all partitions from disk
       community.general.parted:
         device: "{{ install_device }}"
