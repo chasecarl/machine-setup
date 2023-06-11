@@ -78,9 +78,8 @@
 
 
     - name: Format the efi partition
-      community.general.filesystem:
-        fstype: vfat
-        dev: "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
+      ansible.builtin.shell:
+        cmd: mkfs.fat -F32 "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
       tags:
         - format
 
