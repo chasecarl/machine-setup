@@ -8,6 +8,7 @@
     efi_end: 256MiB
     swap_start: "{{ efi_end }}"
     primary_partition_name: cryptroot
+    btrfs_partition_temp_mount_path: /mnt
   tasks:
     - name: Find suitable device
       ansible.builtin.set_fact:
@@ -44,6 +45,13 @@
       register: is_primary_opened
       failed_when: false
 
+    - name: Unmount mount points from possible previous runs
+      ansible.posix.mount:
+        path: "{{ btrfs_partition_temp_mount_path }}{{ item }}"
+        state: unmounted
+      loop:
+        - /home
+        - /
     - name: Disable device swapping
       ansible.builtin.shell:
         cmd: swapoff "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
@@ -157,3 +165,47 @@
         dev: /dev/mapper/{{ primary_partition_name }}
       tags:
         - format_after_encrypt
+
+
+    - name: Mount the primary partition
+      ansible.posix.mount:
+        path: "{{ btrfs_partition_temp_mount_path }}"
+        src: /dev/mapper/{{ primary_partition_name }}
+        fstype: btrfs
+        state: mounted
+    - name: Remove dirs from possible previous runs
+      ansible.builtin.shell:
+        cmd: rm -r "{{ btrfs_partition_temp_mount_path }}"
+      failed_when: false
+    - name: Create a @ subvolume
+      ansible.builtin.shell:
+        cmd: btrfs subvolume create {{ btrfs_partition_temp_mount_path }}/@
+    - name: Create a @home subvolume
+      ansible.builtin.shell:
+        cmd: btrfs subvolume create {{ btrfs_partition_temp_mount_path }}/@home
+    - name: Unmount the primary partition
+      ansible.posix.mount:
+        path: "{{ btrfs_partition_temp_mount_path }}"
+        state: unmounted
+
+
+    - name: Mount the @ subvolume
+      ansible.posix.mount:
+        path: /mnt
+        src: /dev/mapper/{{ primary_partition_name }}
+        fstype: btrfs
+        # noatime: reduces read/write times
+        # compress=zstd: compression algorithm (and optionally level)
+        # space_cache=v2: self-explanatory
+        # discard=async: should improve SSD performance
+        opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@
+        state: mounted
+
+    - name: Mount the @home subvolume
+      ansible.posix.mount:
+        path: /mnt/home
+        src: /dev/mapper/{{ primary_partition_name }}
+        fstype: btrfs
+        opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home
+        state: mounted
+
