@@ -1,3 +1,4 @@
+---
 - name: Prepare the disk(s)
   hosts: pc
   vars:
