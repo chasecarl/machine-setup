@@ -1,0 +1,23 @@
+---
+- name: Find suitable device
+  ansible.builtin.set_fact:
+    install_device: /dev/{{
+      ansible_facts.devices |
+      dict2items |
+      community.general.json_query(suitable_device_query) |
+      first }}
+  vars:
+    # dm is device mapper
+    suitable_device_query: "[?value.removable == '0' && !contains(key, `loop`) && !contains(key, `dm-`)].key"
+  tags:
+    - always
+- name: Print suitable device
+  ansible.builtin.debug:
+    msg: "{{ install_device }}"
+
+- name: Read device info
+  community.general.parted: device="{{ install_device }}" unit=MiB
+  register: device_info
+- name: Print device info
+  ansible.builtin.debug:
+    msg: "{{ device_info }}"

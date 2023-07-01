@@ -1,0 +1,42 @@
+---
+- import_tasks: tasks/partition/format_plain.yaml
+
+- name: Determine if the primary partition is already encrypted
+  ansible.builtin.shell:
+    cmd: blkid "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" | grep crypto_LUKS
+  register: is_primary_encrypted
+  failed_when: is_primary_encrypted.rc == 2
+  tags:
+    - encrypt
+- name: Encrypt the primary partition
+  ansible.builtin.shell:
+    cmd: cryptsetup luksFormat "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}"
+    stdin: "{{ disk_encryption_passphrase }}\n{{ disk_encryption_passphrase }}"
+  when:
+    is_primary_encrypted.rc == 1
+  tags:
+    - encrypt
+
+- name: Determine if the primary partition is already opened
+  ansible.builtin.shell:
+    cmd: ls /dev/mapper/{{ primary_partition_name }}
+  register: is_primary_opened
+  failed_when: false
+  tags:
+    - encrypt
+- name: Open the encrypted primary partition
+  ansible.builtin.shell:
+    cmd: cryptsetup luksOpen "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" "{{ primary_partition_name }}"
+    stdin: "{{ disk_encryption_passphrase }}"
+  when:
+    is_primary_opened.rc == 2
+  tags:
+    - encrypt
+
+
+- name: Format the primary partition
+  community.general.filesystem:
+    fstype: btrfs
+    dev: /dev/mapper/{{ primary_partition_name }}
+  tags:
+    - format_after_encrypt

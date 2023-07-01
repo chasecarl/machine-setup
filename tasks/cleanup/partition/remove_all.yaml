@@ -1,0 +1,7 @@
+---
+- name: Remove all partitions from disk
+  community.general.parted:
+    device: "{{ install_device }}"
+    number: "{{ item.num }}"
+    state: absent
+  loop: "{{ device_info.partitions }}"

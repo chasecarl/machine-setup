@@ -1,0 +1,5 @@
+---
+- name: Close the encrypted primary partition
+  ansible.builtin.shell:
+    cmd: cryptsetup luksClose "{{ primary_partition_name }}"
+  when: is_primary_opened.rc == 0

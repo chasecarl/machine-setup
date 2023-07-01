@@ -1,0 +1,21 @@
+---
+- name: Mount the primary partition
+  ansible.posix.mount:
+    path: "{{ btrfs_partition_temp_mount_path }}"
+    src: /dev/mapper/{{ primary_partition_name }}
+    fstype: btrfs
+    state: mounted
+- name: Remove dirs from possible previous runs
+  ansible.builtin.shell:
+    cmd: rm -r "{{ btrfs_partition_temp_mount_path }}"
+  failed_when: false
+- name: Create a @ subvolume
+  ansible.builtin.shell:
+    cmd: btrfs subvolume create {{ btrfs_partition_temp_mount_path }}/@
+- name: Create a @home subvolume
+  ansible.builtin.shell:
+    cmd: btrfs subvolume create {{ btrfs_partition_temp_mount_path }}/@home
+- name: Unmount the primary partition
+  ansible.posix.mount:
+    path: "{{ btrfs_partition_temp_mount_path }}"
+    state: unmounted

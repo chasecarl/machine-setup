@@ -1,0 +1,37 @@
+---
+- name: Create an efi partition
+  community.general.parted:
+    device: "{{ install_device }}"
+    number: "{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
+    state: present
+    fs_type: fat32
+    part_end: "{{ efi_end }}"
+    flags: [ boot ]
+
+- name: Create a swap partition
+  community.general.parted:
+    device: "{{ install_device }}"
+    number: "{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
+    state: present
+    fs_type: linux-swap
+    part_start: "{{ swap_start }}"
+    part_end:  "{{ swap_start[:-3] | int + ansible_facts.memtotal_mb}}MiB"
+
+- name: Print RAM
+  ansible.builtin.debug:
+    msg: "{{ ansible_facts |
+             community.general.json_query(query) }}"
+  vars:
+    query: "memtotal_mb"
+
+- name: Read device info
+  community.general.parted: device="{{ install_device }}" unit=MiB
+  register: device_info
+
+- name: Create a new primary partition
+  community.general.parted:
+    device: "{{ install_device }}"
+    number: "{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}"
+    state: present
+    part_start: "{{ device_info.partitions[-1].end | int }}MiB"
+    fs_type: btrfs  # it's just a hint

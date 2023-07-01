@@ -1,0 +1,6 @@
+---
+- name: Determine if the primary partition is already opened
+  ansible.builtin.shell:
+    cmd: ls /dev/mapper/{{ primary_partition_name }}
+  register: is_primary_opened
+  failed_when: false

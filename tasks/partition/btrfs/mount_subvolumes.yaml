@@ -1,0 +1,19 @@
+---
+- name: Mount the @ subvolume
+  ansible.posix.mount:
+    path: /mnt
+    src: /dev/mapper/{{ primary_partition_name }}
+    fstype: btrfs
+    # noatime: reduces read/write times
+    # compress=zstd: compression algorithm (and optionally level)
+    # space_cache=v2: self-explanatory
+    # discard=async: should improve SSD performance
+    opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@
+    state: mounted
+- name: Mount the @home subvolume
+  ansible.posix.mount:
+    path: /mnt/home
+    src: /dev/mapper/{{ primary_partition_name }}
+    fstype: btrfs
+    opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home
+    state: mounted

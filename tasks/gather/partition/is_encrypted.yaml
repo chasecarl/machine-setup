@@ -1,0 +1,6 @@
+---
+- name: Determine if the primary partition is already encrypted
+  ansible.builtin.shell:
+    cmd: blkid "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" | grep crypto_LUKS
+  register: is_primary_encrypted
+  failed_when: is_primary_encrypted.rc == 2
