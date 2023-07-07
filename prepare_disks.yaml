@@ -2,14 +2,8 @@
 - name: Prepare the disk(s)
   hosts: pc
   vars:
-    partitions:
-      - efi
-      - swap
-      - primary
     efi_end: 256MiB
     swap_start: "{{ efi_end }}"
-    primary_partition_name: cryptroot
-    btrfs_partition_temp_mount_path: /mnt
   tasks:
     - import_tasks: tasks/gather/device.yaml
 
