@@ -4,3 +4,5 @@
     cmd: ls /dev/mapper/{{ primary_partition_name }}
   register: is_primary_opened
   failed_when: false
+  tags:
+    - mount

@@ -10,6 +10,8 @@
     # discard=async: should improve SSD performance
     opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@
     state: mounted
+  tags:
+    - mount
 - name: Mount the @home subvolume
   ansible.posix.mount:
     path: /mnt/home
@@ -17,3 +19,5 @@
     fstype: btrfs
     opts: noatime,compress=zstd,space_cache=v2,discard=async,subvol=@home
     state: mounted
+  tags:
+    - mount
