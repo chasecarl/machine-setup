@@ -1,0 +1,10 @@
+---
+- name: Open the encrypted primary partition
+  ansible.builtin.shell:
+    cmd: cryptsetup luksOpen "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}" "{{ primary_partition_name }}"
+    stdin: "{{ disk_encryption_passphrase }}"
+  when:
+    is_primary_opened.rc == 2
+  tags:
+    - encrypt
+    - mount
