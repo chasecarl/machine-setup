@@ -1,9 +1,3 @@
 all:
   hosts:
     pc:
-      btrfs_partition_temp_mount_path: /mnt
-      partitions:
-        - efi
-        - swap
-        - primary
-      primary_partition_name: cryptroot
