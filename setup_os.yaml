@@ -1,5 +1,5 @@
 ---
-- name: Install Arch Linux
+- name: Set up Arch Linux
   hosts: pc
   vars:
   tasks:
