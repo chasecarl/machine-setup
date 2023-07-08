@@ -26,5 +26,5 @@
 
     - import_tasks: tasks/partition/btrfs/create_subvolumes.yaml
     - import_tasks: tasks/partition/btrfs/mount_subvolumes.yaml
-    - import_tasks: tasks/os/arch/bootstrap.yaml
+    - import_tasks: tasks/system/arch/bootstrap.yaml
     - import_tasks: tasks/partition/generate_fstab.yaml
