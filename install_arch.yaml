@@ -3,11 +3,3 @@
   hosts: pc
   vars:
   tasks:
-    - import_tasks: tasks/gather/device.yaml
-    - import_tasks: tasks/cleanup/unmount.yaml
-    - import_tasks: tasks/gather/partition/is_opened.yaml
-
-    - import_tasks: tasks/partition/open_encrypted.yaml
-    - import_tasks: tasks/partition/btrfs/mount_subvolumes.yaml
-    - import_tasks: tasks/os/arch/bootstrap.yaml
-    - import_tasks: tasks/partition/generate_fstab.yaml
