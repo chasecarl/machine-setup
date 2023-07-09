@@ -1,0 +1,19 @@
+---
+- name: "mkinitcpio.conf: add btrfs module"
+  ansible.builtin.lineinfile:
+    path: "{{ btrfs_partition_temp_mount_path }}/etc/mkinitcpio.conf"
+    regexp: '^(MODULES=\()(.*\))\s*'
+    line: '\1btrfs \2'
+    backrefs: yes
+- name: "mkinitcpio.conf: add encrypt hook"
+  ansible.builtin.lineinfile:
+    path: "{{ btrfs_partition_temp_mount_path }}/etc/mkinitcpio.conf"
+    regexp: '^(HOOKS=\(.*)(filesystems.*\))\s*$'
+    line: '\1encrypt \2'
+    backrefs: yes
+- name: Regenerate kernel image
+  ansible.builtin.shell:
+    cmd: "{{ maybe_invoke_in_chroot_prefix }} mkinitcpio -p linux"
+  register: mkinitcpio_output
+  # mkinitcpio returns 1 if there was a warning
+  failed_when: not mkinitcpio_output.stdout_lines[-1].endswith("Image generation successful")

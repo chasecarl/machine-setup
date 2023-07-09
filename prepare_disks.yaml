@@ -10,6 +10,7 @@
     swap_start: "{{ efi_end }}"
     primary_partition_name: cryptroot
     btrfs_partition_temp_mount_path: /mnt
+    maybe_invoke_in_chroot_prefix: arch-chroot "{{ btrfs_partition_temp_mount_path }}"
   tasks:
     - import_tasks: tasks/gather/device.yaml
 
@@ -28,3 +29,4 @@
     - import_tasks: tasks/partition/btrfs/mount_subvolumes.yaml
     - import_tasks: tasks/system/arch/bootstrap.yaml
     - import_tasks: tasks/partition/generate_fstab.yaml
+    - import_tasks: tasks/system/create_initramfs.yaml
