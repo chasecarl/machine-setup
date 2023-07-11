@@ -1,0 +1,11 @@
+---
+- name: Create boot partition mount point
+  ansible.builtin.file:
+    path: "{{ btrfs_partition_temp_mount_path }}/boot"
+    state: directory
+- name: Mount the boot partition
+  ansible.posix.mount:
+    path: "{{ btrfs_partition_temp_mount_path }}/boot"
+    src: "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
+    fstype: vfat
+    state: mounted

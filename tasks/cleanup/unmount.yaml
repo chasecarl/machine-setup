@@ -5,4 +5,6 @@
     state: unmounted
   loop:
     - /home
+    - /boot
+    - "{{ btrfs_partition_temp_mount_path }}"
     - /
