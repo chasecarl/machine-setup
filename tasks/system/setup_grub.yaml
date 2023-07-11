@@ -1,0 +1,20 @@
+---
+- name: Install GRUB
+  ansible.builtin.shell:
+    cmd: >
+      {{ maybe_invoke_in_chroot_prefix }}
+      grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+- import_tasks: tasks/gather/partition/uuid.yaml
+- name: Update GRUB config
+  ansible.builtin.lineinfile:
+    path: "{{ btrfs_partition_temp_mount_path }}/etc/default/grub"
+    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=\")(.*)"'
+    line: >
+      \1\2 cryptdevice=UUID={{ primary_uuid.stdout }}:{{ primary_partition_name}}
+      root=/dev/mapper/{{ primary_partition_name }}"
+    backrefs: yes
+- name: Update GRUB
+  ansible.builtin.shell:
+    cmd: >
+      {{ maybe_invoke_in_chroot_prefix }}
+      grub-mkconfig -o /boot/grub/grub.cfg

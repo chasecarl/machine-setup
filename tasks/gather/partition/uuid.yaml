@@ -1,0 +1,8 @@
+---
+- name: Find primary partition UUID
+  ansible.builtin.shell:
+    cmd: >
+      blkid
+      | grep /dev/vda{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}
+      | awk -F \" '{print $2}'
+  register: primary_uuid
