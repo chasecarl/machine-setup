@@ -1,7 +1,9 @@
 ---
 - name: Format the efi partition
   ansible.builtin.shell:
-    cmd: mkfs.fat -F32 "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}"
+    cmd: >
+      mkfs.fat -F32
+      {{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'efi') + 1 }}
   tags:
     - format
 
@@ -14,7 +16,9 @@
 
 - name: Enable swapping
   ansible.builtin.shell:
-    cmd: swapon "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}"
+    cmd: >
+      swapon
+      {{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'swap') + 1 }}
   when: ansible_facts.swaptotal_mb == 0
   tags:
     - format

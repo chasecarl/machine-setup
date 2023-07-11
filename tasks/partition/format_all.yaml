@@ -4,7 +4,9 @@
 - import_tasks: tasks/gather/partition/is_encrypted.yaml
 - name: Encrypt the primary partition
   ansible.builtin.shell:
-    cmd: cryptsetup luksFormat "{{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}"
+    cmd: >
+      cryptsetup luksFormat
+      {{ install_device }}{{ partitions | ansible.utils.index_of('eq', 'primary') + 1 }}
     stdin: "{{ disk_encryption_passphrase }}\n{{ disk_encryption_passphrase }}"
   when:
     is_primary_encrypted.rc == 1
