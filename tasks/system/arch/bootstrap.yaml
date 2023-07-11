@@ -1,4 +1,4 @@
 ---
 - name: Run pacman bootstrap
   ansible.builtin.shell:
-    pacstrap -K {{ btrfs_partition_temp_mount_path }} base linux linux-firmware grub efibootmgr
+    pacstrap -K {{ system_mount_path }} base linux linux-firmware grub efibootmgr

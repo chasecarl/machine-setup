@@ -1,4 +1,4 @@
 ---
 - name: Generate fstab
   ansible.builtin.shell:
-    cmd: genfstab -U {{ btrfs_partition_temp_mount_path }} >> {{ btrfs_partition_temp_mount_path }}/etc/fstab
+    cmd: genfstab -U {{ system_mount_path }} >> {{ system_mount_path }}/etc/fstab

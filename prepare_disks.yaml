@@ -9,8 +9,8 @@
     efi_end: 256MiB
     swap_start: "{{ efi_end }}"
     primary_partition_name: cryptroot
-    btrfs_partition_temp_mount_path: /mnt
-    maybe_invoke_in_chroot_prefix: arch-chroot "{{ btrfs_partition_temp_mount_path }}"
+    system_mount_path: /mnt
+    maybe_invoke_in_chroot_prefix: arch-chroot "{{ system_mount_path }}"
   tasks:
     - import_tasks: tasks/gather/device.yaml
 

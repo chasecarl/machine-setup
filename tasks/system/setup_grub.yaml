@@ -7,7 +7,7 @@
 - import_tasks: tasks/gather/partition/uuid.yaml
 - name: Update GRUB config
   ansible.builtin.lineinfile:
-    path: "{{ btrfs_partition_temp_mount_path }}/etc/default/grub"
+    path: "{{ system_mount_path }}/etc/default/grub"
     regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=\")(.*)"'
     line: >
       \1\2 cryptdevice=UUID={{ primary_uuid.stdout }}:{{ primary_partition_name}}

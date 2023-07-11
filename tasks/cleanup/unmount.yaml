@@ -1,10 +1,10 @@
 ---
 - name: Unmount mount points from possible previous runs
   ansible.posix.mount:
-    path: "{{ btrfs_partition_temp_mount_path }}{{ item }}"
+    path: "{{ system_mount_path }}{{ item }}"
     state: unmounted
   loop:
     - /home
     - /boot
-    - "{{ btrfs_partition_temp_mount_path }}"
+    - "{{ system_mount_path }}"
     - /
