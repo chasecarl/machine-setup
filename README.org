@@ -9,4 +9,15 @@ reproducibility).
 **** Python 3
 *** Credentials
 Fill the appropriate ~host_vars/*/vault.yaml~ for your machine
-according to the variables defined in ~host_vars/*/vars.yaml~
+according to the variables defined in ~host_vars/*/vars.yaml~.
+** Playbooks
+*** prepare_disks.yaml
+Installs the base minimal system and does all the pre-installation
+steps, such as disk partitioning and encryption.
+*** setup_os.yaml
+Continues to configure the new system as its user. You should probably
+reboot the system and login as a new user after running
+~prepare_disks.yaml~. In theory, this could be done within a single
+playbook, chrooting for each task. But then you're limited to only
+using ~ansible.builtin.shell~. See also [[https://mitogen.networkgenomics.com/ansible_detailed.html][Mitogen]], [[https://gist.github.com/odyssey4me/7649d70420e10b67b22f3592181be659][Ansible remote chroot
+experimentation]].
