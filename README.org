@@ -5,8 +5,8 @@ reproducibility).
 * Usage
 ** Prerequisites
 *** Machine Requirements
-**** SSH server
-**** Python 3
+- SSH server
+- Python 3
 *** Credentials
 Fill the appropriate ~host_vars/*/vault.yaml~ for your machine
 according to the variables defined in ~host_vars/*/vars.yaml~.
