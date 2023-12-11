@@ -33,3 +33,4 @@
     - import_tasks: tasks/partition/generate_fstab.yaml
     - import_tasks: tasks/system/create_initramfs.yaml
     - import_tasks: tasks/system/setup_grub.yaml
+    - import_tasks: tasks/system/setup_root_password.yaml
