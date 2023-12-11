@@ -1,3 +1,7 @@
+* Machine Setup
+Turn your system configuration into code with Ansible. Right now only
+Arch Linux is supported. See also [[https://nixos.org/][NixOS]] and [[https://guix.gnu.org/][GNU Guix]] (for
+reproducibility).
 * Usage
 ** Prerequisites
 *** Machine Requirements
