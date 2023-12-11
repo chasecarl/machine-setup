@@ -1,0 +1,11 @@
+---
+- name: Add audio packages
+  vars:
+    _packages_to_install:
+      - pipewire
+      - pipewire-alsa
+      - pipewire-audio
+      - pipewire-jack
+      - wireplumber
+  set_fact:
+    packages_to_install: "{{ packages_to_install | default([]) + _packages_to_install }}"

@@ -1,5 +1,5 @@
 ---
 - name: Set up Arch Linux
   hosts: pc
-  vars:
   tasks:
+    - import_tasks: tasks/os/arch/install_packages.yaml

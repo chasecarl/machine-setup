@@ -1,0 +1,9 @@
+---
+- name: Add filesystem utilities
+  vars:
+    _packages_to_install:
+      - btrfs-progs
+      - e2fsprogs
+      - fsck
+  set_fact:
+    packages_to_install: "{{ packages_to_install | default([]) + _packages_to_install }}"

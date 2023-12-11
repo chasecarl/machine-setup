@@ -1,0 +1,6 @@
+---
+- name: Enable multilib
+  ansible.builtin.replace:
+    path: "{{ system_mount_path }}/etc/pacman.conf"
+    regexp: '#\s*(\[multilib\]).*\n#\s*(.*)'
+    replace: '\1\n\2'

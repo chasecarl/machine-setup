@@ -1,0 +1,7 @@
+---
+- name: Add network packages
+  vars:
+    _packages_to_install:
+      - networkmanager
+  set_fact:
+    packages_to_install: "{{ packages_to_install | default([]) + _packages_to_install }}"

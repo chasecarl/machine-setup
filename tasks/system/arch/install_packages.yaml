@@ -1,0 +1,6 @@
+---
+- include_tasks: tasks/os/arch/enable_multilib.yaml
+- include_tasks: "{{ item }}"
+  with_fileglob:
+    - tasks/os/arch/packages/*.yaml
+# TODO: use packages_to_install to get the list of packages for installation

@@ -1,0 +1,9 @@
+---
+- name: Add man & info packages
+  vars:
+    _packages_to_install:
+      - man-db
+      - man-pages
+      - texinfo
+  set_fact:
+    packages_to_install: "{{ packages_to_install | default([]) + _packages_to_install }}"
