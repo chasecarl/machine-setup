@@ -1,6 +1,7 @@
 * Machine Setup
 Turn your system configuration into code with Ansible. Right now only
-Arch Linux is supported. See also [[https://nixos.org/][NixOS]] and [[https://guix.gnu.org/][GNU Guix]] (for
+Arch Linux is supported. This project will probably draw less
+attention because of [[https://gitlab.com/chasecarl/omnia/-/tree/master/qubes/saltstack][Qubes/SaltStack]]. See also [[https://nixos.org/][NixOS]] and [[https://guix.gnu.org/][GNU Guix]] (for
 reproducibility).
 * Usage
 ** Prerequisites
